@@ -1,10 +1,14 @@
+from __future__ import annotations
+
+from typing import Any, Mapping
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+db: SQLAlchemy = SQLAlchemy()
 
 
-def create_app(test_config: dict | None = None) -> Flask:
+def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///parking.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -15,7 +19,7 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     db.init_app(app)
 
-    from .models import Client, ClientParking, Parking  # noqa
+    from .models import Client, Parking, ClientParking  # noqa: F401
     from .routes import bp
 
     app.register_blueprint(bp)

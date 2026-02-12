@@ -2,8 +2,10 @@ from datetime import datetime
 
 from . import db
 
+BaseModel = db.Model  # type: ignore[type-arg]
 
-class Client(db.Model):
+
+class Client(BaseModel):
     __tablename__ = "client"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +15,7 @@ class Client(db.Model):
     car_number = db.Column(db.String(10))
 
 
-class Parking(db.Model):
+class Parking(BaseModel):
     __tablename__ = "parking"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +25,7 @@ class Parking(db.Model):
     count_available_places = db.Column(db.Integer, nullable=False)
 
 
-class ClientParking(db.Model):
+class ClientParking(BaseModel):
     __tablename__ = "client_parking"
 
     id = db.Column(db.Integer, primary_key=True)
