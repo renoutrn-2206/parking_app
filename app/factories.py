@@ -19,9 +19,7 @@ class ClientFactory(factory.alchemy.SQLAlchemyModelFactory):
     surname = factory.LazyAttribute(lambda _: fake.last_name())
     credit_card = factory.Maybe(
         factory.LazyAttribute(lambda _: random.choice([True, False])),
-        yes_declaration=factory.LazyAttribute(
-            lambda _: fake.credit_card_number()
-        ),
+        yes_declaration=factory.LazyAttribute(lambda _: fake.credit_card_number()),
         no_declaration=None,
     )
     car_number = factory.LazyAttribute(lambda _: fake.license_plate())
