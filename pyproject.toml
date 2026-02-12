@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parking_app"
+version = "0.1.0"
+description = "Parking app demo"
+requires-python = ">=3.12"
+dependencies = [
+    "flask",
+    "flask-sqlalchemy",
+]
+
+[tool.setuptools]
+packages = ["app"]
