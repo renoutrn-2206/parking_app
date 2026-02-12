@@ -1,6 +1,5 @@
-from app.factories import ClientFactory, ParkingFactory
-
 from app import db
+from app.factories import ClientFactory, ParkingFactory
 from app.models import Client, Parking
 
 
