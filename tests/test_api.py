@@ -48,9 +48,7 @@ def test_parking_in(client, db_session):
 def test_parking_out(client, db_session):
     client.post("/client_parkings", json={"client_id": 1, "parking_id": 1})
 
-    resp = client.delete(
-        "/client_parkings", json={"client_id": 1, "parking_id": 1}
-    )
+    resp = client.delete("/client_parkings", json={"client_id": 1, "parking_id": 1})
     assert resp.status_code == 200
 
     from app.models import ClientParking, Parking
@@ -58,8 +56,11 @@ def test_parking_out(client, db_session):
     parking = db_session.get(Parking, 1)
     assert parking.count_available_places == 10  # вернулось место
 
-    cp = db_session.query(ClientParking).filter_by(
-        client_id=1, parking_id=1
-    ).order_by(ClientParking.id.desc()).first()
+    cp = (
+        db_session.query(ClientParking)
+        .filter_by(client_id=1, parking_id=1)
+        .order_by(ClientParking.id.desc())
+        .first()
+    )
     assert cp.time_out is not None
     assert cp.time_out >= cp.time_in
