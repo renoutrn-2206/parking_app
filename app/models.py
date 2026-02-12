@@ -1,9 +1,11 @@
+# type: ignore[name-defined]
+
 from datetime import datetime
 
 from . import db
 
 
-class Client(db.Model):  # type: ignore[misc,valid-type]
+class Client(db.Model):
     __tablename__ = "client"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,7 +15,7 @@ class Client(db.Model):  # type: ignore[misc,valid-type]
     car_number = db.Column(db.String(10))
 
 
-class Parking(db.Model):  # type: ignore[misc,valid-type]
+class Parking(db.Model):
     __tablename__ = "parking"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +25,7 @@ class Parking(db.Model):  # type: ignore[misc,valid-type]
     count_available_places = db.Column(db.Integer, nullable=False)
 
 
-class ClientParking(db.Model):  # type: ignore[misc,valid-type]
+class ClientParking(db.Model):
     __tablename__ = "client_parking"
 
     id = db.Column(db.Integer, primary_key=True)
