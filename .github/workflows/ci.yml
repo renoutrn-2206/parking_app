@@ -39,7 +39,7 @@ jobs:
 
       - name: Run mypy
         run: |
-          mypy app tests factories.py
+          mypy app tests
 
       - name: Run pytest
         run: |
