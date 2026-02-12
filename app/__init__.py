@@ -15,7 +15,7 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     db.init_app(app)
 
-    from .models import Client, Parking, ClientParking  # noqa
+    from .models import Client, ClientParking, Parking  # noqa
     from .routes import bp
 
     app.register_blueprint(bp)

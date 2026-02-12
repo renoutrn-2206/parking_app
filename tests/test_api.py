@@ -53,7 +53,7 @@ def test_parking_out(client, db_session):
     )
     assert resp.status_code == 200
 
-    from app.models import Parking, ClientParking
+    from app.models import ClientParking, Parking
 
     parking = db_session.get(Parking, 1)
     assert parking.count_available_places == 10  # вернулось место
