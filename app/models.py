@@ -1,5 +1,4 @@
-# type: ignore[name-defined]
-
+# mypy: disable-error-code="name-defined"
 from datetime import datetime
 
 from . import db
@@ -40,3 +39,5 @@ class ClientParking(db.Model):
 
     client = db.relationship("Client", backref="client_parkings")
     parking = db.relationship("Parking", backref="client_parkings")
+
+__all__ = ["Client", "Parking", "ClientParking"]
