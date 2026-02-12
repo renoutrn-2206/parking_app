@@ -19,7 +19,7 @@ def create_app(test_config: Mapping[str, Any] | None = None) -> Flask:
 
     db.init_app(app)
 
-    from .models import Client, Parking, ClientParking  # noqa: F401
+    from .models import Client, ClientParking, Parking  # noqa: F401
     from .routes import bp
 
     app.register_blueprint(bp)
