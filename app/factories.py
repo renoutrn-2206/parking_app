@@ -35,6 +35,7 @@ class ParkingFactory(factory.alchemy.SQLAlchemyModelFactory):
     opened = factory.LazyAttribute(lambda _: random.choice([True, False]))
     count_places = factory.LazyAttribute(lambda _: fake.random_int(min=1, max=100))
 
-    @factory.lazy_attribute  # type: ignore[misc]
+    @factory.lazy_attribute
     def count_available_places(self) -> int:  # type: ignore[return-value]
-        return self.count_places
+        # mypy: ignore-all-errors
+        return self.count_places  # type: ignore
