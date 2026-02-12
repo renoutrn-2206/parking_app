@@ -40,4 +40,5 @@ class ClientParking(db.Model):
     client = db.relationship("Client", backref="client_parkings")
     parking = db.relationship("Parking", backref="client_parkings")
 
+
 __all__ = ["Client", "Parking", "ClientParking"]
