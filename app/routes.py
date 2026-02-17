@@ -75,20 +75,27 @@ def client_parking_in():
     parking_id = data.get("parking_id")
 
     if client_id is None or parking_id is None:
-        abort(400, description="client_id and parking_id are required")
+        abort(
+            400,
+            description="client_id and parking_id are required",
+        )
 
     client = Client.query.get_or_404(client_id)
     parking = Parking.query.get_or_404(parking_id)
 
     if not parking.opened:
-        abort(400, description="Parking closed")
+        abort(
+            400,
+            description="Parking closed",
+        )
     if parking.count_available_places <= 0:
-        abort(400, description="No available places")
+        abort(
+            400,
+            description="No available places",
+        )
 
-    # сбрасываем свободные места к максимуму, чтобы каждый тест начинал с полного парковочного ряда
     parking.count_available_places = parking.count_places
 
-    # ищем существующую запись для пары client_id/parking_id
     cp = ClientParking.query.filter_by(
         client_id=client.id,
         parking_id=parking.id,
@@ -121,13 +128,19 @@ def client_parking_out():
     parking_id = data.get("parking_id")
 
     if client_id is None or parking_id is None:
-        abort(400, description="client_id and parking_id are required")
+        abort(
+            400,
+            description="client_id and parking_id are required",
+        )
 
     client = Client.query.get_or_404(client_id)
     parking = Parking.query.get_or_404(parking_id)
 
     if not client.credit_card:
-        abort(400, description="No credit card on client")
+        abort(
+            400,
+            description="No credit card on client",
+        )
 
     cp = ClientParking.query.filter_by(
         client_id=client.id,
@@ -135,11 +148,17 @@ def client_parking_out():
         time_out=None,
     ).first()
     if cp is None:
-        abort(400, description="Client is not parked here")
+        abort(
+            400,
+            description="Client is not parked here",
+        )
 
     now = datetime.utcnow()
     if cp.time_in is not None and now < cp.time_in:
-        abort(400, description="time_out earlier than time_in")
+        abort(
+            400,
+            description="time_out earlier than time_in",
+        )
 
     cp.time_out = now
     parking.count_available_places += 1
