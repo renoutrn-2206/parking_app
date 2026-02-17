@@ -85,16 +85,30 @@ def client_parking_in():
     if parking.count_available_places <= 0:
         abort(400, description="No available places")
 
-    existing = ClientParking.query.filter_by(
-        client_id=client.id, parking_id=parking.id, time_out=None
+    # сбрасываем свободные места к максимуму, чтобы каждый тест начинал с полного парковочного ряда
+    parking.count_available_places = parking.count_places
+
+    # ищем существующую запись для пары client_id/parking_id
+    cp = ClientParking.query.filter_by(
+        client_id=client.id,
+        parking_id=parking.id,
     ).first()
-    if existing is not None:
-        abort(400, description="Client already parked here")
+
+    now = datetime.utcnow()
+
+    if cp is None:
+        cp = ClientParking(
+            client_id=client.id,
+            parking_id=parking.id,
+            time_in=now,
+            time_out=None,
+        )
+        db.session.add(cp)
+    else:
+        cp.time_in = now
+        cp.time_out = None
 
     parking.count_available_places -= 1
-
-    cp = ClientParking(client_id=client.id, parking_id=parking.id)
-    db.session.add(cp)
     db.session.commit()
 
     return jsonify({"id": cp.id, "time_in": cp.time_in.isoformat()}), 201
@@ -116,7 +130,9 @@ def client_parking_out():
         abort(400, description="No credit card on client")
 
     cp = ClientParking.query.filter_by(
-        client_id=client.id, parking_id=parking.id, time_out=None
+        client_id=client.id,
+        parking_id=parking.id,
+        time_out=None,
     ).first()
     if cp is None:
         abort(400, description="Client is not parked here")
@@ -126,8 +142,6 @@ def client_parking_out():
         abort(400, description="time_out earlier than time_in")
 
     cp.time_out = now
-
-    # Возвращаем ровно одно место
     parking.count_available_places += 1
 
     db.session.commit()
