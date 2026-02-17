@@ -41,7 +41,7 @@ def get_client(client_id: int):
 
 @bp.post("/clients")
 def create_client():
-    data = request.json or {}
+    data = request.get_json() or {}
     client = Client(
         name=data["name"],
         surname=data["surname"],
@@ -55,7 +55,7 @@ def create_client():
 
 @bp.post("/parkings")
 def create_parking():
-    data = request.json or {}
+    data = request.get_json() or {}
     count_places = data["count_places"]
     parking = Parking(
         address=data["address"],
@@ -70,9 +70,12 @@ def create_parking():
 
 @bp.post("/client_parkings")
 def client_parking_in():
-    data = request.json or {}
-    client_id = data["client_id"]
-    parking_id = data["parking_id"]
+    data = request.get_json() or {}
+    client_id = data.get("client_id")
+    parking_id = data.get("parking_id")
+
+    if client_id is None or parking_id is None:
+        abort(400, description="client_id and parking_id are required")
 
     client = Client.query.get_or_404(client_id)
     parking = Parking.query.get_or_404(parking_id)
@@ -82,11 +85,10 @@ def client_parking_in():
     if parking.count_available_places <= 0:
         abort(400, description="No available places")
 
-    # проверка, что этот клиент уже не стоит на этой парковке
     existing = ClientParking.query.filter_by(
         client_id=client.id, parking_id=parking.id, time_out=None
     ).first()
-    if existing:
+    if existing is not None:
         abort(400, description="Client already parked here")
 
     parking.count_available_places -= 1
@@ -100,9 +102,12 @@ def client_parking_in():
 
 @bp.delete("/client_parkings")
 def client_parking_out():
-    data = request.json or {}
-    client_id = data["client_id"]
-    parking_id = data["parking_id"]
+    data = request.get_json() or {}
+    client_id = data.get("client_id")
+    parking_id = data.get("parking_id")
+
+    if client_id is None or parking_id is None:
+        abort(400, description="client_id and parking_id are required")
 
     client = Client.query.get_or_404(client_id)
     parking = Parking.query.get_or_404(parking_id)
@@ -113,16 +118,18 @@ def client_parking_out():
     cp = ClientParking.query.filter_by(
         client_id=client.id, parking_id=parking.id, time_out=None
     ).first()
-    if not cp:
+    if cp is None:
         abort(400, description="Client is not parked here")
 
     now = datetime.utcnow()
-    if cp.time_in and now < cp.time_in:
+    if cp.time_in is not None and now < cp.time_in:
         abort(400, description="time_out earlier than time_in")
 
     cp.time_out = now
+
+    # Возвращаем ровно одно место
     parking.count_available_places += 1
 
     db.session.commit()
 
-    return jsonify({"id": cp.id, "time_out": cp.time_out.isoformat()})
+    return jsonify({"id": cp.id, "time_out": cp.time_out.isoformat()}), 200
